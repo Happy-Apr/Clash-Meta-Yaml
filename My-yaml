@@ -1,0 +1,206 @@
+#仅支持Meta核
+proxy-groups:
+- name: "Proxy"
+  type: load-balance #负载均衡，可参考虚空终端wiki。type可以更改
+  disable-udp: false
+  use: #引用下面proxy-providers的内容
+  - 机场1 
+  - 机场2
+  exclude-filter: HK|JP|SG…  #正则匹配筛选节点，这个是排除筛选的节点，下面的filter是保留筛选的节点。参考虚空终端wiki。
+  url: https://cp.cloudflare.com/generate_204
+  strategy: 'round-robin'
+  interval: '300'
+- name: 流媒体🎦
+  type: select
+  disable-udp: false
+  use:
+  - 机场1
+  filter: 同上面的excloud-filter
+- name: "\U0001F4FA BiliBili"
+  type: select
+  proxies:
+  - DIRECT
+  - "Proxy"
+- name: "\U0001F3AE Game"
+  type: select
+  proxies:
+  - DIRECT
+  - "Proxy"
+- name: "\U0001F4F2 电报消息"
+  type: load-balance
+  disable-udp: false
+  use:
+  - 机场1
+  url: https://cp.cloudflare.com/generate_204
+  strategy: 'round-robin'
+  interval: '300'
+- name: Ⓜ️ 微软服务
+  type: select
+  proxies:
+  - DIRECT
+  use:
+  - 机场1
+  filter: 
+- name: "\U0001F34E 苹果服务"
+  type: select
+  proxies:
+  - DIRECT
+  - "Proxy"
+- name: "OpenAI"
+  type: select
+  disable-udp: false
+  use:
+  - 机场1
+  filter: 
+- name: "\U0001F41F 漏网之鱼"
+  type: select
+  proxies:
+  - DIRECT
+  - Proxy
+  use:
+  - 机场
+  filter: 
+rule-providers: #规则集
+  Direct:
+    type: http
+    behavior: classical
+    url: https://ruleset-1319987019.cos.ap-chongqing.myqcloud.com/Bigme_Direct.yaml
+    interval: 86400
+    path: "./ruleset/Bigme_Direct.yaml"
+  Proxy:
+    type: http
+    behavior: classical
+    url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/ProxyLite/ProxyLite.yaml
+    interval: 86400
+    path: "./ruleset/Proxy.yaml"
+  Netflix:
+    type: http
+    behavior: classical
+    url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Netflix/Netflix_Classical.yaml
+    interval: 86400
+    path: "./ruleset/Netflix.yaml"
+  Disney:
+    type: http
+    behavior: classical
+    url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Disney/Disney.yaml
+    interval: 86400
+    path: "./ruleset/Disney.yaml"
+  BiliBili:
+    type: http
+    behavior: classical
+    url: https://ruleset-1319987019.cos.ap-chongqing.myqcloud.com/BiliBili.yaml
+    interval: 86400
+    path: "./ruleset/BiliBili.yaml"
+  Game:
+    type: http
+    behavior: classical
+    url: https://ruleset-1319987019.cos.ap-chongqing.myqcloud.com/Game.yaml
+    interval: 86400
+    path: "./ruleset/Steam.yaml"
+  Gemini:
+    type: http
+    behavior: classical
+    interval: 86400
+    url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Gemini/Gemini.yaml
+    path: "./rule_provider/Gemini.yaml"
+  Google:
+    type: http
+    behavior: classical
+    interval: 86400
+    url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Google/Google.yaml
+    path: "./rule_provider/Google.yaml"
+  YouTube:
+    type: http
+    behavior: classical
+    url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/YouTube/YouTube.yaml
+    interval: 86400
+    path: "./ruleset/YouTube.yaml"
+  Telegram:
+    type: http
+    behavior: classical
+    url: https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Telegram/Telegram.yaml
+    interval: 86400
+    path: "./ruleset/Telegram.yaml"
+  Microsoft:
+    type: http
+    behavior: classical
+    url: https://ruleset-1319987019.cos.ap-chongqing.myqcloud.com/Microsoft.yaml
+    interval: 86400
+    path: "./ruleset/Microsoft.yaml"
+  Apple:
+    type: http
+    behavior: classical
+    url: https://ruleset-1319987019.cos.ap-chongqing.myqcloud.com/Apple_Classical.yaml
+    interval: 86400
+    path: "./ruleset/Apple.yaml"
+  Global:
+    type: http
+    behavior: classical
+    interval: 86400
+    url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Global/Global_Classical.yaml
+    path: "./rule_provider/Global_Classical.yaml"
+  GlobalMedia:
+    type: http
+    behavior: classical
+    interval: 86400
+    url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/GlobalMedia/GlobalMedia_Classical.yaml
+    path: "./rule_provider/GlobalMedia_Classical.yaml"
+  ChinaMax:
+    type: http
+    behavior: classical
+    url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/ChinaMax/ChinaMax_Classical.yaml
+    interval: 86400
+    path: "./ruleset/ChinaMax.yaml"
+  SteamCN:
+    type: http
+    behavior: classical
+    interval: 86400
+    url: https://ruleset-1319987019.cos.ap-chongqing.myqcloud.com/SteamCN.yaml
+    path: "./rule_provider/SteamCN.yaml"
+  OpenAI:
+    type: http
+    behavior: classical
+    interval: 86400
+    url: https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/OpenAI/OpenAI.yaml
+    path: "./rule_provider/OpenAI.yaml"
+rules: #引用上面的规则集
+- DOMAIN,node-report.bigme.online,DIRECT
+- DOMAIN-KeyWord,emby,DIRECT
+- "RULE-SET,Gemini,OpenAI" 
+- "RULE-SET,OpenAI,OpenAI"
+- "RULE-SET,Direct,DIRECT"
+- "RULE-SET,SteamCN,DIRECT"
+- "RULE-SET,Proxy,Proxy"
+- "RULE-SET,Netflix,流媒体🎦"
+- "RULE-SET,Disney,流媒体🎦"
+- "RULE-SET,BiliBili,\U0001F4FA BiliBili"
+- "RULE-SET,Game,\U0001F3AE Game"
+- "RULE-SET,Google,Proxy,no-resolve"
+- "RULE-SET,YouTube,Proxy"
+- "RULE-SET,Telegram,\U0001F4F2 电报消息"
+- RULE-SET,Microsoft,Ⓜ️ 微软服务
+- "RULE-SET,Apple,\U0001F34E 苹果服务"
+- "RULE-SET,Global,Proxy,no-resolve"
+- "RULE-SET,GlobalMedia,Proxy,no-resolve"
+- "RULE-SET,ChinaMax,DIRECT"
+- "GEOIP,CN,DIRECT"
+- "MATCH,\U0001F41F 漏网之鱼"
+proxy-providers: #代理集 上面use引用的这里的信息，有几个代理自己按照模版写几个就行。
+  机场1: #自己命名
+    type: http
+    path: "./proxy_provider/机场1.yaml" #机场1 上面名字是什么，自己改一样的名字。否则use无法引用。
+    url: 填写自己的链接
+    interval: 3600
+    health-check:
+      enable: true
+      url: http://www.gstatic.com/generate_204
+      interval: 300
+  机场2: #同上
+    type: http
+    path: "./proxy_provider/ACA.yaml"
+    url: 
+    interval: 3600
+    health-check:
+      enable: true
+      url: http://cp.cloudflare.com/generate_204
+      interval: 300
