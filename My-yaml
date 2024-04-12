@@ -1,4 +1,4 @@
-#仅支持Meta核
+#仅支持Meta核，自行匹配。
 proxy-groups:
 - name: "Proxy"
   type: load-balance #负载均衡，可参考虚空终端wiki。type可以更改
